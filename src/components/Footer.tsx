@@ -8,40 +8,39 @@ export default function Footer() {
         <div className="footer-brand">
           <div className="footer-logo">
             <Cpu size={24} />
-            <span>TechStore</span>
+            <span>GroovyAss Beat</span>
           </div>
           <p>
-            Компьютердик техника жана тетиктердин электрондук соода системасы.
-            Сапаттуу продукттар, тез жеткирүү.
+            Электронная система торговли музыкальных инструментов и аппаратуры.
+            Качественная продукция, быстрая доставка.
           </p>
         </div>
 
         <div className="footer-links">
           <h4>Навигация</h4>
-          <Link to="/">Башкы бет</Link>
+          <Link to="/">Главное</Link>
           <Link to="/catalog">Каталог</Link>
           <Link to="/cart">Корзина</Link>
-          <Link to="/about">Биз жөнүндө</Link>
+          <Link to="/about">О нас</Link>
         </div>
 
         <div className="footer-links">
-          <h4>Категориялар</h4>
-          <Link to="/catalog?cat=laptops">Ноутбуктар</Link>
-          <Link to="/catalog?cat=desktops">Компьютерлер</Link>
-          <Link to="/catalog?cat=monitors">Мониторлор</Link>
-          <Link to="/catalog?cat=components">Тетиктер</Link>
+          <h4>Категории</h4>
+          <Link to="/catalog?cat=guitars">Гитары</Link>
+          <Link to="/catalog?cat=pianos">Клавишные</Link>
+          <Link to="/catalog?cat=drums">Ударные</Link>
         </div>
 
         <div className="footer-contact">
-          <h4>Байланыш</h4>
-          <p><Phone size={14} /> +996 (555) 123-456</p>
-          <p><Mail size={14} /> info@techstore.kg</p>
+          <h4>Контакты</h4>
+          <p><Phone size={14} /> +996 (777) 328-907</p>
+          <p><Mail size={14} /> info@muzstore.kg</p>
           <p><MapPin size={14} /> Бишкек, Чүй пр. 150</p>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2026 TechStore. Бардык укуктар корголгон.</p>
+        <p>&copy; 2026 GroovyAss Beat. Все права защищены.</p>
       </div>
     </footer>
   );

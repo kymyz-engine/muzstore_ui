@@ -1,27 +1,45 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { SlidersHorizontal, Grid3X3, List } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import CategoryFilter from "../components/CategoryFilter";
-import { products } from "../data/products";
-import type { CategoryId, SortOption } from "../types";
+import { fetchProducts } from "../api/products";
+import type { CategoryId, SortOption, Product } from "../types";
 
 export default function Catalog() {
   const [searchParams] = useSearchParams();
   const initialCat = searchParams.get("cat") as CategoryId | null;
   const initialQuery = searchParams.get("q") || "";
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
+
   const [category, setCategory] = useState<CategoryId | null>(initialCat);
-  const [sort, setSort] = useState<SortOption>("rating");
-  const [query, setQuery] = useState(initialQuery);
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [sort, setSort]         = useState<SortOption>("rating");
+  const [query, setQuery]       = useState(initialQuery);
+  const [view, setView]         = useState<"grid" | "list">("grid");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
   const [inStockOnly, setInStockOnly] = useState(false);
 
+  // загружаем с бэка при изменении категории, сортировки, цены
+  useEffect(() => {
+    setLoading(true);
+    setError(null);
+    fetchProducts({
+      category:  category ?? undefined,
+      priceMin:  priceRange[0] > 0 ? priceRange[0] : undefined,
+      priceMax:  priceRange[1] < 200000 ? priceRange[1] : undefined,
+      sort,
+    })
+      .then(setProducts)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [category, sort, priceRange]);
+
+  // поиск и inStock фильтруем локально (без лишних запросов)
   const filtered = useMemo(() => {
     let result = [...products];
-
-    if (category) result = result.filter((p) => p.category === category);
 
     if (query.trim()) {
       const q = query.toLowerCase();
@@ -33,29 +51,10 @@ export default function Catalog() {
       );
     }
 
-    result = result.filter(
-      (p) => p.price >= priceRange[0] && p.price <= priceRange[1],
-    );
-
     if (inStockOnly) result = result.filter((p) => p.inStock);
 
-    switch (sort) {
-      case "price-asc":
-        result.sort((a, b) => a.price - b.price);
-        break;
-      case "price-desc":
-        result.sort((a, b) => b.price - a.price);
-        break;
-      case "rating":
-        result.sort((a, b) => b.rating - a.rating);
-        break;
-      case "name":
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-    }
-
     return result;
-  }, [category, sort, query, priceRange, inStockOnly]);
+  }, [products, query, inStockOnly]);
 
   return (
     <div className="catalog-page">
@@ -114,30 +113,29 @@ export default function Catalog() {
           </select>
 
           <div className="view-toggle">
-            <button
-              className={view === "grid" ? "active" : ""}
-              onClick={() => setView("grid")}
-            >
+            <button className={view === "grid" ? "active" : ""} onClick={() => setView("grid")}>
               <Grid3X3 size={18} />
             </button>
-            <button
-              className={view === "list" ? "active" : ""}
-              onClick={() => setView("list")}
-            >
+            <button className={view === "list" ? "active" : ""} onClick={() => setView("list")}>
               <List size={18} />
             </button>
           </div>
         </div>
       </div>
 
-      {filtered.length === 0 ? (
+      {loading && <div className="loading-state">Жүктөлүүдө...</div>}
+      {error   && <div className="error-state">Катa: {error}</div>}
+
+      {!loading && !error && filtered.length === 0 && (
         <div className="empty-state">
           <p>Продукт табылган жок</p>
           <button className="btn btn-outline" onClick={() => { setCategory(null); setQuery(""); }}>
             Фильтрлерди тазалоо
           </button>
         </div>
-      ) : (
+      )}
+
+      {!loading && !error && filtered.length > 0 && (
         <div className={`products-grid ${view === "list" ? "list-view" : ""}`}>
           {filtered.map((p) => (
             <ProductCard key={p.id} product={p} />

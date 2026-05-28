@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ShoppingCart, Check, Star, ArrowLeft, Package, Shield, Truck } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import ProductCard from "../components/ProductCard";
-import { products } from "../data/products";
+import { fetchProduct, fetchProducts } from "../api/products";
+import type { Product } from "../types";
 
 function formatPrice(price: number) {
   return price.toLocaleString("ru-RU") + " сом";
@@ -11,9 +13,32 @@ function formatPrice(price: number) {
 export default function ProductDetail() {
   const { id } = useParams();
   const { addItem, isInCart } = useCart();
-  const product = products.find((p) => p.id === Number(id));
 
-  if (!product) {
+  const [product, setProduct]   = useState<Product | null>(null);
+  const [related, setRelated]   = useState<Product[]>([]);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) return;
+    setLoading(true);
+    setError(null);
+
+    fetchProduct(Number(id))
+      .then((p) => {
+        setProduct(p);
+        // загружаем похожие по категории
+        return fetchProducts({ category: p.category });
+      })
+      .then((all) => {
+        setRelated(all.filter((p) => p.id !== Number(id)).slice(0, 4));
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <div className="loading-state">Жүктөлүүдө...</div>;
+  if (error || !product) {
     return (
       <div className="not-found">
         <h2>Продукт табылган жок</h2>
@@ -25,14 +50,11 @@ export default function ProductDetail() {
   }
 
   const inCart = isInCart(product.id);
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
-
   const discount = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
     : 0;
 
+  // остальной JSX без изменений — product тот же тип
   return (
     <div className="product-detail">
       <Link to="/catalog" className="back-link">
@@ -56,17 +78,13 @@ export default function ProductDetail() {
           <div className="detail-rating">
             <div className="stars">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star
-                  key={i}
-                  size={18}
+                <Star key={i} size={18}
                   fill={i < Math.round(product.rating) ? "#fbbf24" : "none"}
                   stroke="#fbbf24"
                 />
               ))}
             </div>
-            <span>
-              {product.rating} ({product.reviews} сын-пикир)
-            </span>
+            <span>{product.rating} ({product.reviews} сын-пикир)</span>
           </div>
 
           <div className="detail-price">
@@ -91,29 +109,16 @@ export default function ProductDetail() {
             onClick={() => !inCart && addItem(product)}
             disabled={!product.inStock}
           >
-            {inCart ? (
-              <>
-                <Check size={18} /> Корзинада
-              </>
-            ) : (
-              <>
-                <ShoppingCart size={18} /> Корзинага кошуу
-              </>
-            )}
+            {inCart ? <><Check size={18} /> Корзинада</> : <><ShoppingCart size={18} /> Корзинага кошуу</>}
           </button>
 
           <div className="detail-perks">
-            <div>
-              <Truck size={18} /> Бишкек боюнча тез жеткирүү
-            </div>
-            <div>
-              <Shield size={18} /> Расмий кепилдик
-            </div>
+            <div><Truck size={18} /> Бишкек боюнча тез жеткирүү</div>
+            <div><Shield size={18} /> Расмий кепилдик</div>
           </div>
         </div>
       </div>
 
-      {/* Specs */}
       <section className="specs-section">
         <h2>Техникалык мүнөздөмөлөр</h2>
         <div className="specs-table">
@@ -126,14 +131,11 @@ export default function ProductDetail() {
         </div>
       </section>
 
-      {/* Related */}
       {related.length > 0 && (
         <section className="section">
           <h2>Окшош продукттар</h2>
           <div className="products-grid">
-            {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+            {related.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </section>
       )}

@@ -8,8 +8,8 @@ function formatPrice(price: number) {
 }
 
 const badgeLabels: Record<string, string> = {
-  new: "Жаңы",
-  sale: "Арзандатуу",
+  new: "Новое",
+  sale: "Скидкы",
   hit: "Хит",
 };
 
@@ -29,7 +29,7 @@ export default function ProductCard({ product }: { product: Product }) {
             {badgeLabels[product.badge]}
           </span>
         )}
-        {!product.inStock && <span className="out-of-stock-overlay">Кампада жок</span>}
+        {!product.inStock && <span className="out-of-stock-overlay">Нет в наличии</span>}
       </Link>
 
       <div className="product-info">
@@ -61,11 +61,11 @@ export default function ProductCard({ product }: { product: Product }) {
         >
           {inCart ? (
             <>
-              <Check size={16} /> Корзинада
+              <Check size={16} /> В корзине
             </>
           ) : (
             <>
-              <ShoppingCart size={16} /> Корзинага
+              <ShoppingCart size={16} /> В корзину
             </>
           )}
         </button>

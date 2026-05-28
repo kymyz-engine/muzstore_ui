@@ -13,10 +13,10 @@ export default function Cart() {
     return (
       <div className="empty-cart">
         <ShoppingBag size={64} strokeWidth={1} />
-        <h2>Корзина бош</h2>
-        <p>Каталогдон продукттарды тандаңыз</p>
+        <h2>Корзина пуста</h2>
+        <p>Выберите товары из каталога</p>
         <Link to="/catalog" className="btn btn-primary">
-          Каталогго өтүү
+          Перейти в каталог
         </Link>
       </div>
     );
@@ -26,7 +26,7 @@ export default function Cart() {
     <div className="cart-page">
       <div className="cart-header">
         <Link to="/catalog" className="back-link">
-          <ArrowLeft size={18} /> Каталогго кайтуу
+          <ArrowLeft size={18} /> Вернуться в каталог
         </Link>
         <h1>Корзина</h1>
       </div>
@@ -71,30 +71,30 @@ export default function Cart() {
         </div>
 
         <aside className="cart-summary">
-          <h3>Буйрутма</h3>
+          <h3>Заказ</h3>
 
           <div className="summary-rows">
             <div className="summary-row">
-              <span>Продукттар ({items.reduce((s, i) => s + i.quantity, 0)})</span>
+              <span>Товары ({items.reduce((s, i) => s + i.quantity, 0)})</span>
               <span>{formatPrice(totalPrice)}</span>
             </div>
             <div className="summary-row">
-              <span>Жеткирүү</span>
-              <span className="free">Бекер</span>
+              <span>Доставка</span>
+              <span className="free">Бесплатно</span>
             </div>
           </div>
 
           <div className="summary-total">
-            <span>Жалпы</span>
+            <span>В общем</span>
             <span>{formatPrice(totalPrice)}</span>
           </div>
 
           <button className="btn btn-primary checkout-btn">
-            Буйрутма берүү
+            Заказать
           </button>
 
           <button className="btn btn-outline clear-btn" onClick={clearCart}>
-            Корзинаны тазалоо
+            Очистить корзину
           </button>
         </aside>
       </div>

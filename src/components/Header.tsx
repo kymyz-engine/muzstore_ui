@@ -11,9 +11,9 @@ export default function Header() {
   const [query, setQuery] = useState("");
 
   const links = [
-    { to: "/", label: "Башкы бет" },
+    { to: "/", label: "Главная" },
     { to: "/catalog", label: "Каталог" },
-    { to: "/about", label: "Биз жөнүндө" },
+    { to: "/about", label: "О нас" },
   ];
 
   const handleSearch = (e: React.FormEvent) => {
@@ -30,7 +30,7 @@ export default function Header() {
       <div className="header-inner">
         <Link to="/" className="logo">
           <Cpu size={28} />
-          <span>TechStore</span>
+          <span>GroovyAss Beat</span>
         </Link>
 
         <nav className={`nav ${menuOpen ? "nav-open" : ""}`}>
@@ -50,7 +50,7 @@ export default function Header() {
           <button
             className="icon-btn"
             onClick={() => setSearchOpen(!searchOpen)}
-            aria-label="Издөө"
+            aria-label="Поиск"
           >
             <Search size={20} />
           </button>
@@ -63,7 +63,7 @@ export default function Header() {
           <button
             className="icon-btn burger"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Менюну ачуу"
+            aria-label="Открыть меню"
           >
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -75,13 +75,13 @@ export default function Header() {
           <Search size={18} />
           <input
             type="text"
-            placeholder="Продукт издөө..."
+            placeholder="Найти продукт..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
           />
           <button type="submit" className="search-submit">
-            Издөө
+            Поиск
           </button>
         </form>
       )}

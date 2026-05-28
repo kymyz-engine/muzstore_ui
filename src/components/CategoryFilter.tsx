@@ -1,5 +1,6 @@
-import { categories } from "../data/categories";
-import type { CategoryId } from "../types";
+import { useState, useEffect } from "react";
+import { fetchCategories } from "../api/categories";
+import type { Category, CategoryId } from "../types";
 
 interface Props {
   selected: CategoryId | null;
@@ -7,6 +8,12 @@ interface Props {
 }
 
 export default function CategoryFilter({ selected, onSelect }: Props) {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchCategories().then(setCategories).catch(console.error);
+  }, []);
+
   return (
     <div className="category-filter">
       <button

@@ -14,13 +14,7 @@ export interface Product {
   badge?: "new" | "sale" | "hit";
 }
 
-export type CategoryId =
-  | "laptops"
-  | "desktops"
-  | "monitors"
-  | "components"
-  | "peripherals"
-  | "networking";
+export type CategoryId = string;
 
 export interface Category {
   id: CategoryId;

@@ -1,10 +1,12 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Truck, Shield, Headphones, Zap, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import ProductCard from "../components/ProductCard";
 import SulaimanToo from "../components/SulaimanToo";
-import { products } from "../data/products";
-import { categories } from "../data/categories";
+import { fetchProducts } from "../api/products";
+import { fetchCategories } from "../api/categories";
+import type { Product, Category } from "../types"
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -16,8 +18,16 @@ const fadeUp = {
 };
 
 export default function Home() {
-  const hits = products.filter((p) => p.badge === "hit").slice(0, 4);
-  const sales = products.filter((p) => p.badge === "sale").slice(0, 4);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchProducts().then(setProducts).catch(console.error);
+    fetchCategories().then(setCategories).catch(console.error);
+  }, []);
+
+  const hits   = products.filter((p) => p.badge === "hit").slice(0, 4);
+  const sales  = products.filter((p) => p.badge === "sale").slice(0, 4);
   const newest = products.filter((p) => p.badge === "new").slice(0, 4);
 
   return (
@@ -48,39 +58,40 @@ export default function Home() {
           animate="visible"
         >
           <motion.span className="hero-badge" custom={0} variants={fadeUp}>
-            <Zap size={14} /> Жаңы коллекция 2026
+            <Zap size={14} /> Новая коллекция 2026
           </motion.span>
           <motion.h1 custom={1} variants={fadeUp}>
-            Компьютердик техниканын
-            <span className="gradient-text"> эң мыктылары</span>
+            Самые лучшие
+            <span className="gradient-text"> музыкальные инструменты </span>
+            в городе
           </motion.h1>
           <motion.p custom={2} variants={fadeUp}>
-            Ноутбуктар, компьютерлер, мониторлор, тетиктер жана перифериялар —
-            бардыгы бир жерде, Кыргызстандын мыкты баасында.
+            Гитары, синтезаторы, барабаны и спецеффекты для твоего выступления 
+            - все в одном месте. Лучшие цены в городе.
           </motion.p>
           <motion.div className="hero-actions" custom={3} variants={fadeUp}>
             <Link to="/catalog" className="btn btn-primary btn-glow">
-              Каталогду көрүү <ArrowRight size={18} />
+              Смотреть каталог <ArrowRight size={18} />
             </Link>
             <Link to="/about" className="btn btn-glass">
-              Биз жөнүндө
+              О нас
             </Link>
           </motion.div>
 
           <motion.div className="hero-stats" custom={4} variants={fadeUp}>
             <div>
               <strong>500+</strong>
-              <span>Продукт</span>
+              <span>Продуктов</span>
             </div>
             <div className="stat-divider" />
             <div>
               <strong>5000+</strong>
-              <span>Кардар</span>
+              <span>Клиентов</span>
             </div>
             <div className="stat-divider" />
             <div>
               <strong>24/7</strong>
-              <span>Колдоо</span>
+              <span>Поддержка</span>
             </div>
           </motion.div>
         </motion.div>
@@ -89,9 +100,9 @@ export default function Home() {
       {/* Features */}
       <section className="features">
         {[
-          { icon: <Truck size={28} />, title: "Тез жеткирүү", desc: "Бишкек боюнча 24 саат ичинде" },
-          { icon: <Shield size={28} />, title: "Кепилдик", desc: "Расмий кепилдик 1-3 жыл" },
-          { icon: <Headphones size={28} />, title: "Колдоо 24/7", desc: "Техникалык колдоо кызматы" },
+          { icon: <Truck size={28} />, title: "Быстрая доставка", desc: "По Бишкеку за 2-3 часа" },
+          { icon: <Shield size={28} />, title: "Гарантия", desc: "Официальная гарантия 1-3 года" },
+          { icon: <Headphones size={28} />, title: "Поддержка 24/7", desc: "Служба тех. поддержки" },
         ].map((f, i) => (
           <motion.div
             key={f.title}
@@ -111,9 +122,9 @@ export default function Home() {
       {/* Categories */}
       <section className="section">
         <div className="section-header">
-          <h2>Категориялар</h2>
+          <h2>Категории</h2>
           <Link to="/catalog" className="see-all">
-            Баарын көрүү <ArrowRight size={16} />
+            Смотреть все <ArrowRight size={16} />
           </Link>
         </div>
         <div className="categories-grid">
@@ -128,7 +139,7 @@ export default function Home() {
               <Link to={`/catalog?cat=${cat.id}`} className="category-card">
                 <span className="category-icon">{cat.icon}</span>
                 <span className="category-name">{cat.name}</span>
-                <span className="category-count">{cat.count} продукт</span>
+                <span className="category-count">{cat.count} продуктов</span>
               </Link>
             </motion.div>
           ))}
@@ -139,10 +150,10 @@ export default function Home() {
       <section className="section">
         <div className="section-header">
           <h2>
-            <Star size={22} fill="#fbbf24" stroke="#fbbf24" /> Популярдуу
+            <Star size={22} fill="#fbbf24" stroke="#fbbf24" /> Популярное
           </h2>
           <Link to="/catalog" className="see-all">
-            Баарын көрүү <ArrowRight size={16} />
+            Смотреть все <ArrowRight size={16} />
           </Link>
         </div>
         <div className="products-grid">
@@ -157,10 +168,10 @@ export default function Home() {
         <section className="section">
           <div className="section-header">
             <h2>
-              <Zap size={22} /> Жаңы келгендер
+              <Zap size={22} /> Свежее поступление
             </h2>
             <Link to="/catalog" className="see-all">
-              Баарын көрүү <ArrowRight size={16} />
+              Смотреть все <ArrowRight size={16} />
             </Link>
           </div>
           <div className="products-grid">
@@ -175,9 +186,9 @@ export default function Home() {
       {sales.length > 0 && (
         <section className="section">
           <div className="section-header">
-            <h2>Арзандатуулар</h2>
+            <h2>Скидки</h2>
             <Link to="/catalog" className="see-all">
-              Баарын көрүү <ArrowRight size={16} />
+              Смотреть все <ArrowRight size={16} />
             </Link>
           </div>
           <div className="products-grid">
@@ -191,10 +202,9 @@ export default function Home() {
       {/* CTA Banner */}
       <section className="cta-banner">
         <div className="cta-glow" />
-        <h2>Сизге керектүү техника бизде!</h2>
-        <p>22 продукт, 6 категория, мыкты баалар</p>
+        <h2>Все что вы хотите у нас!</h2>
         <Link to="/catalog" className="btn btn-primary btn-glow">
-          Азыр сатып алуу <ArrowRight size={18} />
+          Купить сейчас <ArrowRight size={18} />
         </Link>
       </section>
     </div>
