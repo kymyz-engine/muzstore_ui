@@ -60,7 +60,7 @@ export default function Catalog() {
     <div className="catalog-page">
       <div className="catalog-header">
         <h1>Каталог</h1>
-        <p>{filtered.length} продукт табылды</p>
+        <p>Найдено {filtered.length} продуктов</p>
       </div>
 
       <CategoryFilter selected={category} onSelect={setCategory} />
@@ -69,7 +69,7 @@ export default function Catalog() {
         <div className="search-input-wrap">
           <input
             type="text"
-            placeholder="Издөө..."
+            placeholder="Поиск..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="catalog-search"
@@ -83,7 +83,7 @@ export default function Catalog() {
               checked={inStockOnly}
               onChange={(e) => setInStockOnly(e.target.checked)}
             />
-            <span>Кампада бар</span>
+            <span>Есть в наличии</span>
           </label>
 
           <div className="price-filter">
@@ -106,10 +106,10 @@ export default function Catalog() {
             onChange={(e) => setSort(e.target.value as SortOption)}
             className="sort-select"
           >
-            <option value="rating">Рейтинг боюнча</option>
-            <option value="price-asc">Арзан → Кымбат</option>
-            <option value="price-desc">Кымбат → Арзан</option>
-            <option value="name">Аталышы боюнча</option>
+            <option value="rating">По рейтингу</option>
+            <option value="price-asc">Дешевле → Дороже</option>
+            <option value="price-desc">Дороже → Дешевле</option>
+            <option value="name">По названию (А-Я)</option>
           </select>
 
           <div className="view-toggle">
@@ -123,14 +123,14 @@ export default function Catalog() {
         </div>
       </div>
 
-      {loading && <div className="loading-state">Жүктөлүүдө...</div>}
-      {error   && <div className="error-state">Катa: {error}</div>}
+      {loading && <div className="loading-state">Загружается...</div>}
+      {error   && <div className="error-state">Ошибка: {error}</div>}
 
       {!loading && !error && filtered.length === 0 && (
         <div className="empty-state">
-          <p>Продукт табылган жок</p>
+          <p>Продукт не найден</p>
           <button className="btn btn-outline" onClick={() => { setCategory(null); setQuery(""); }}>
-            Фильтрлерди тазалоо
+            Очистить фильтр
           </button>
         </div>
       )}

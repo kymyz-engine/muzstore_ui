@@ -20,7 +20,7 @@ export default function CategoryFilter({ selected, onSelect }: Props) {
         className={`cat-btn ${selected === null ? "active" : ""}`}
         onClick={() => onSelect(null)}
       >
-        Баары
+        Все
       </button>
       {categories.map((cat) => (
         <button

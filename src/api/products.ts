@@ -22,5 +22,5 @@ export function fetchProducts(params: ProductsParams = {}): Promise<Product[]> {
 }
 
 export function fetchProduct(id: number): Promise<Product> {
-  return request<Product>(`/products/${id}`);
+  return request<Product>(`/product/${id}`);
 }
