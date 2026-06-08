@@ -112,6 +112,13 @@ export default function ProductDetail() {
             {inCart ? <><Check size={18} /> В корзине</> : <><ShoppingCart size={18} /> Добавить в корзину</>}
           </button>
 
+          <button
+            className={`btn ${inCart ? "btn-success" : "btn-primary"} add-btn`}
+            disabled={!product.inStock}
+          >
+            {inCart ? <><Check size={18} /> В корзине</> : <><ShoppingCart size={18} /> Арендовать</>}
+          </button>
+
           <div className="detail-perks">
             <div><Truck size={18} /> Быстрая доставка по Бишкеку</div>
             <div><Shield size={18} /> Официальная гарантия</div>

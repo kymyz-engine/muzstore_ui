@@ -20,6 +20,7 @@ export default function CategoryFilter({ selected, onSelect }: Props) {
         className={`cat-btn ${selected === null ? "active" : ""}`}
         onClick={() => onSelect(null)}
       >
+        <img className="cat-icon" src="https://img.icons8.com/?size=100&id=nKRW0uVSnqxV&format=png&color=000000" />
         Все
       </button>
       {categories.map((cat) => (
@@ -28,7 +29,7 @@ export default function CategoryFilter({ selected, onSelect }: Props) {
           className={`cat-btn ${selected === cat.id ? "active" : ""}`}
           onClick={() => onSelect(cat.id)}
         >
-          <span className="cat-icon">{cat.icon}</span>
+          <img className="cat-icon" src={cat.icon}/>
           <span>{cat.name}</span>
         </button>
       ))}

@@ -29,3 +29,17 @@ export interface CartItem {
 }
 
 export type SortOption = "price-asc" | "price-desc" | "rating" | "name";
+
+export interface CartItemDTO {
+  id: number;
+  product: Product;
+  quantity: number;
+  subtotal: number;
+}
+
+export interface CartDTO {
+  id: number;
+  items: CartItemDTO[];
+  totalItems: number;
+  totalPrice: number;
+}

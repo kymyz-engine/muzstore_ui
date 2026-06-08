@@ -670,6 +670,7 @@
 .cat-btn {
   display: flex;
   align-items: center;
+  flex-direction: column;
   gap: 6px;
   padding: 8px 16px;
   border-radius: 999px;
@@ -695,7 +696,10 @@
 
 .cat-icon {
   font-size: 16px;
+  height: 80px;
+  width: 80px;
 }
+  
 
 /* ═══════════════════════════════════════════
    Catalog Toolbar

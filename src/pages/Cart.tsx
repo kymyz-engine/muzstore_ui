@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
 function formatPrice(price: number) {
   return price.toLocaleString("ru-RU") + " сом";
@@ -8,6 +9,7 @@ function formatPrice(price: number) {
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, clearCart, totalPrice } = useCart();
+  const navigate = useNavigate();
 
   if (items.length === 0) {
     return (
@@ -16,7 +18,7 @@ export default function Cart() {
         <h2>Корзина пуста</h2>
         <p>Выберите товары из каталога</p>
         <Link to="/catalog" className="btn btn-primary">
-          Перейти в каталог
+          Перейти в каталог 
         </Link>
       </div>
     );
@@ -89,7 +91,7 @@ export default function Cart() {
             <span>{formatPrice(totalPrice)}</span>
           </div>
 
-          <button className="btn btn-primary checkout-btn">
+          <button className="btn btn-primary checkout-btn" onClick={() => navigate("/checkout")}>
             Заказать
           </button>
 

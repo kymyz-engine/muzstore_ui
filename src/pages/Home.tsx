@@ -137,7 +137,7 @@ export default function Home() {
               transition={{ delay: i * 0.06 }}
             >
               <Link to={`/catalog?cat=${cat.id}`} className="category-card">
-                <span className="category-icon">{cat.icon}</span>
+                <img className="category-icon" src={cat.icon}/>
                 <span className="category-name">{cat.name}</span>
                 <span className="category-count">{cat.count} продуктов</span>
               </Link>
