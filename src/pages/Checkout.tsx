@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Truck, Building, User, MapPin, ShoppingBag, ShieldCheck } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { createOrder } from "../api/order";
+import { useAuth } from "../context/AuthContext";
 
 function formatPrice(price: number) {
   return price.toLocaleString("ru-RU") + " сом";
@@ -12,26 +13,29 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
 
-  const [firstName, setFirstName]     = useState("");
-  const [lastName, setLastName]       = useState("");
-  const [phone, setPhone]             = useState("");
-  const [email, setEmail]             = useState("");
-  const [city, setCity]               = useState("Бишкек");
-  const [district, setDistrict]       = useState("");
-  const [address, setAddress]         = useState("");
-  const [comment, setComment]         = useState("");
+
+  const { user } = useAuth();
+  const [name, setFirstName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [comment, setComment] = useState("");
   const [deliveryType, setDeliveryType] = useState<"courier" | "pickup">("courier");
-  const [loading, setLoading]         = useState(false);
-  const [error, setError]             = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = () => {
-    if (!firstName || !phone) {
+    if (!user) {
+      navigate("/login");
+      return null;
+    }
+    if (!name || !phone) {
       setError("Заполните имя и телефон");
       return;
     }
     setLoading(true);
     setError(null);
-    createOrder({ firstName, lastName, phone, email, city, district, address, comment, deliveryType })
+    createOrder({ name, phone, email, address, comment, deliveryType })
       .then((order) => {
         clearCart();
         navigate(`/order-success/${order.id}`);
@@ -64,11 +68,7 @@ export default function Checkout() {
             <div className="row2">
               <div className="field">
                 <label>Имя</label>
-                <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Айбек" />
-              </div>
-              <div className="field">
-                <label>Фамилия</label>
-                <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Уметов" />
+                <input type="text" value={name} onChange={(e) => setFirstName(e.target.value)} placeholder="Айбек" />
               </div>
             </div>
             <div className="row2">
@@ -116,16 +116,6 @@ export default function Checkout() {
             <div className="field">
               <label>Улица и дом</label>
               <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="ул. Чуй 100, кв. 5" />
-            </div>
-            <div className="row2">
-              <div className="field">
-                <label>Город</label>
-                <input type="text" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Бишкек" />
-              </div>
-              <div className="field">
-                <label>Район</label>
-                <input type="text" value={district} onChange={(e) => setDistrict(e.target.value)} placeholder="Октябрьский" />
-              </div>
             </div>
             <div className="field">
               <label>Комментарий</label>

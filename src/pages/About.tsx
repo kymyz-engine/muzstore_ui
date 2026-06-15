@@ -4,7 +4,7 @@ export default function About() {
   return (
     <div className="about-page">
       <section className="about-hero">
-        <h1>Биз жөнүндө</h1>
+        <h1>О нас</h1>
         <p>
           GroovyAss Beat — Электронная система торговли музыкальных инструментов и аппаратуры.
           Предлагаем качественную продукцию в лучшей цене.

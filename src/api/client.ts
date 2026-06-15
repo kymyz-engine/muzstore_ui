@@ -3,6 +3,7 @@ const BASE_URL = "http://localhost:8080/muzstore/ws/public";
 async function request<T>(path: string, method: string = "GET", body?: unknown): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined,
   });
