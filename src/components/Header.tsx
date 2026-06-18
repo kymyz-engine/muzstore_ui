@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { ShoppingCart, Menu, X, Search, Cpu } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ShoppingCart, Menu, X, Search, Cpu, LogIn, LogOut, User } from "lucide-react";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function Header() {
   const { totalItems } = useCart();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -23,6 +26,11 @@ export default function Header() {
       setSearchOpen(false);
       setQuery("");
     }
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
@@ -47,11 +55,7 @@ export default function Header() {
         </nav>
 
         <div className="header-actions">
-          <button
-            className="icon-btn"
-            onClick={() => setSearchOpen(!searchOpen)}
-            aria-label="Поиск"
-          >
+          <button className="icon-btn" onClick={() => setSearchOpen(!searchOpen)} aria-label="Поиск">
             <Search size={20} />
           </button>
 
@@ -60,11 +64,22 @@ export default function Header() {
             {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
           </Link>
 
-          <button
-            className="icon-btn burger"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Открыть меню"
-          >
+          {user ? (
+            <>
+              <span className="header-user">
+                <User size={16} /> {user.name}
+              </span>
+              <button className="icon-btn" onClick={handleLogout} aria-label="Выйти">
+                <LogOut size={20} />
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="icon-btn" aria-label="Войти">
+              <LogIn size={20} />
+            </Link>
+          )}
+
+          <button className="icon-btn burger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Открыть меню">
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
@@ -80,9 +95,7 @@ export default function Header() {
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
           />
-          <button type="submit" className="search-submit">
-            Поиск
-          </button>
+          <button type="submit" className="search-submit">Поиск</button>
         </form>
       )}
     </header>
