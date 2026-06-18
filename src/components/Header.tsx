@@ -30,7 +30,7 @@ export default function Header() {
       <div className="header-inner">
         <Link to="/" className="logo">
           <Cpu size={28} />
-          <span>GroovyAss Beat</span>
+          <span>Groovy Beat</span>
         </Link>
 
         <nav className={`nav ${menuOpen ? "nav-open" : ""}`}>

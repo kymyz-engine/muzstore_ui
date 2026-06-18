@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer-brand">
           <div className="footer-logo">
             <Cpu size={24} />
-            <span>GroovyAss Beat</span>
+            <span>Groovy Beat</span>
           </div>
           <p>
             Электронная система торговли музыкальных инструментов и аппаратуры.
@@ -40,7 +40,7 @@ export default function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2026 GroovyAss Beat. Все права защищены.</p>
+        <p>&copy; 2026 Groovy Beat. Все права защищены.</p>
       </div>
     </footer>
   );
