@@ -5,6 +5,7 @@ export interface Product {
   category: CategoryId;
   price: number;
   oldPrice?: number;
+  pricePerDay?: number;   // добавить
   image: string;
   rating: number;
   reviews: number;
@@ -35,6 +36,8 @@ export interface CartItemDTO {
   product: Product;
   quantity: number;
   subtotal: number;
+  isRent: boolean;
+  rentDays: number | null;
 }
 
 export interface CartDTO {

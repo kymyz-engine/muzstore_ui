@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ShoppingCart, Check, Star, ArrowLeft, Package, Shield, Truck } from "lucide-react";
+import { ShoppingCart, Check, Star, ArrowLeft, Package, Shield, Truck, Calendar, Minus, Plus } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import ProductCard from "../components/ProductCard";
 import { fetchProduct, fetchProducts } from "../api/products";
@@ -12,22 +12,26 @@ function formatPrice(price: number) {
 
 export default function ProductDetail() {
   const { id } = useParams();
-  const { addItem, isInCart } = useCart();
+  const { addItem, addRentItem, isInCart, isRented } = useCart();
 
-  const [product, setProduct]   = useState<Product | null>(null);
-  const [related, setRelated]   = useState<Product[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [error, setError]       = useState<string | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [related, setRelated] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [showRentPicker, setShowRentPicker] = useState(false);
+  const [rentDays, setRentDays] = useState(1);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     setError(null);
+    setShowRentPicker(false);
+    setRentDays(1);
 
     fetchProduct(Number(id))
       .then((p) => {
         setProduct(p);
-        // загружаем похожие по категории
         return fetchProducts({ category: p.category });
       })
       .then((all) => {
@@ -50,11 +54,16 @@ export default function ProductDetail() {
   }
 
   const inCart = isInCart(product.id);
+  const inRent = isRented(product.id);
   const discount = product.oldPrice
     ? Math.round((1 - product.price / product.oldPrice) * 100)
     : 0;
 
-  // остальной JSX без изменений — product тот же тип
+  const handleAddRent = () => {
+    addRentItem(product.id, rentDays);
+    setShowRentPicker(false);
+  };
+
   return (
     <div className="product-detail">
       <Link to="/catalog" className="back-link">
@@ -78,7 +87,9 @@ export default function ProductDetail() {
           <div className="detail-rating">
             <div className="stars">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} size={18}
+                <Star
+                  key={i}
+                  size={18}
                   fill={i < Math.round(product.rating) ? "#fbbf24" : "none"}
                   stroke="#fbbf24"
                 />
@@ -104,20 +115,73 @@ export default function ProductDetail() {
 
           <p className="detail-desc">{product.description}</p>
 
+          {/* Кнопка покупки */}
           <button
             className={`btn ${inCart ? "btn-success" : "btn-primary"} add-btn`}
             onClick={() => !inCart && addItem(product)}
             disabled={!product.inStock}
           >
-            {inCart ? <><Check size={18} /> В корзине</> : <><ShoppingCart size={18} /> Добавить в корзину</>}
+            {inCart
+              ? <><Check size={18} /> В корзине</>
+              : <><ShoppingCart size={18} /> Добавить в корзину</>
+            }
           </button>
 
-          <button
-            className={`btn ${inCart ? "btn-success" : "btn-primary"} add-btn`}
-            disabled={!product.inStock}
-          >
-            {inCart ? <><Check size={18} /> В корзине</> : <><ShoppingCart size={18} /> Арендовать</>}
-          </button>
+          {/* Блок аренды — только если у товара есть pricePerDay */}
+          {product.pricePerDay && (
+            <div className="rent-block">
+              <div className="rent-price-label">
+                <Calendar size={15} />
+                Аренда — {formatPrice(product.pricePerDay)} / день
+              </div>
+
+              {inRent ? (
+                <button className="btn btn-success add-btn" disabled>
+                  <Check size={18} /> Аренда в корзине
+                </button>
+              ) : showRentPicker ? (
+                <div className="rent-picker">
+                  <div className="rent-days-row">
+                    <button
+                      className="rent-days-btn"
+                      onClick={() => setRentDays((d) => Math.max(1, d - 1))}
+                    >
+                      <Minus size={15} />
+                    </button>
+                    <span className="rent-days-value">{rentDays} дн.</span>
+                    <button
+                      className="rent-days-btn"
+                      onClick={() => setRentDays((d) => d + 1)}
+                    >
+                      <Plus size={15} />
+                    </button>
+                  </div>
+                  <p className="rent-total">
+                    Итого: {formatPrice(product.pricePerDay * rentDays)}
+                  </p>
+                  <div className="rent-picker-actions">
+                    <button className="btn btn-secondary add-btn" onClick={handleAddRent}>
+                      <Calendar size={18} /> Добавить аренду
+                    </button>
+                    <button
+                      className="btn btn-outline add-btn"
+                      onClick={() => setShowRentPicker(false)}
+                    >
+                      Отмена
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  className="btn btn-secondary add-btn"
+                  onClick={() => setShowRentPicker(true)}
+                  disabled={!product.inStock}
+                >
+                  <Calendar size={18} /> Арендовать
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="detail-perks">
             <div><Truck size={18} /> Быстрая доставка по Бишкеку</div>
@@ -142,7 +206,9 @@ export default function ProductDetail() {
         <section className="section">
           <h2>Похожие</h2>
           <div className="products-grid">
-            {related.map((p) => <ProductCard key={p.id} product={p} />)}
+            {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
           </div>
         </section>
       )}

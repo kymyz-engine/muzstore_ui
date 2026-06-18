@@ -20,3 +20,11 @@ export function apiRemoveItem(itemId: number): Promise<CartDTO> {
 export function apiClearCart(): Promise<void> {
   return request<void>("/cart", "DELETE");
 }
+
+export function apiAddRentItem(productId: number, rentDays: number): Promise<CartDTO> {
+  return request<CartDTO>(`/cart/rent?productId=${productId}&rentDays=${rentDays}`, "POST");
+}
+
+export function apiUpdateRentDays(itemId: number, days: number): Promise<CartDTO> {
+  return request<CartDTO>(`/cart/items/${itemId}/rent?days=${days}`, "PUT");
+}
